@@ -54,8 +54,6 @@ export const App = () => {
 
   const clickHandler = (id: string) => () => dispatch(incrementUser(id));
 
-  // ***
-
   return (
     <div>
       <div style={{ display: "flex", gap: "1rem", fontSize: "4rem" }}>

@@ -1,35 +1,19 @@
 import { User } from "@/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-interface DemoState {
-  counter: number;
-  users: Record<string, User>;
-  userIds: string[];
-}
+interface UsersPageState {}
 
-const initialState = {
-  counter: 0,
-  users: {},
-  userIds: [],
-} satisfies DemoState as DemoState;
+const initialState = {} satisfies UsersPageState as UsersPageState;
 
-const demoSlice = createSlice({
-  name: "counter",
+const usersSlice = createSlice({
+  name: "usersPage",
   initialState,
   reducers: {
-    increment(state) {
-      state.counter++;
-    },
-    fetchUsersSuccess(state, { payload: users }: PayloadAction<User[]>) {
-      state.users = users.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {});
-      state.userIds = users.map(({ id }) => id);
-    },
-    incrementUser(state, { payload: userId }) {
-      state.users[userId].userCounter++;
-    },
+    fetchUsersSuccess(state, { payload: users }: PayloadAction<User[]>) {},
+    addUser(state, { payload: user }: PayloadAction<User>) {},
+    incrementUser(state, { payload: userId }: PayloadAction<string>) {},
   },
 });
 
-export const { increment, fetchUsersSuccess, incrementUser } =
-  demoSlice.actions;
-export default demoSlice.reducer;
+export const { fetchUsersSuccess, addUser, incrementUser } = usersSlice.actions;
+export default usersSlice.reducer;

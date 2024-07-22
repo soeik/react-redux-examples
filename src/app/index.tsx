@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsersSuccess, incrementUser } from "./redux";
 import { RootState } from "@/store";
@@ -14,29 +14,31 @@ const getItems = () => {
     }));
 };
 
-const Item = ({ id, onClick }: { id: string; onClick: () => void }) => {
-  const counter = useSelector<RootState, number>(
-    (state) => state.demo.users[id].userCounter
-  );
-  const name = useSelector<RootState, string>(
-    (state) => state.demo.users[id].name
-  );
-  const color = faker.color.rgb();
-  return (
-    <div
-      style={{
-        background: color,
-        padding: "1rem",
-        textAlign: "center",
-        width: "200px",
-      }}
-      onClick={onClick}
-    >
-      <h2>{name}</h2>
-      <h1>{counter}</h1>
-    </div>
-  );
-};
+const Item = memo(
+  ({ id, onClick }: { id: string; onClick: (id: string) => void }) => {
+    const counter = useSelector<RootState, number>(
+      (state) => state.demo.users[id].userCounter
+    );
+    const name = useSelector<RootState, string>(
+      (state) => state.demo.users[id].name
+    );
+    const color = faker.color.rgb();
+    return (
+      <div
+        style={{
+          background: color,
+          padding: "1rem",
+          textAlign: "center",
+          width: "200px",
+        }}
+        onClick={() => onClick(id)}
+      >
+        <h2>{name}</h2>
+        <h1>{counter}</h1>
+      </div>
+    );
+  }
+);
 
 export const App = () => {
   const [count, setCount] = useState(0);
@@ -52,7 +54,10 @@ export const App = () => {
 
   const color = faker.color.rgb();
 
-  const clickHandler = (id: string) => () => dispatch(incrementUser(id));
+  const clickHandler = useCallback(
+    (id: string) => dispatch(incrementUser(id)),
+    []
+  );
 
   return (
     <div>
@@ -68,7 +73,7 @@ export const App = () => {
       <hr />
       <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
         {itemIds.map((id) => (
-          <Item key={id} id={id} onClick={clickHandler(id)} />
+          <Item key={id} id={id} onClick={clickHandler} />
         ))}
       </div>
     </div>
